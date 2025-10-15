@@ -13,16 +13,19 @@ import csv
 def read_youtube_csv(filepath):
     with open(filepath, newline='', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
-        rows = list(reader)
-        return rows
+        return [row for row in reader]
 
 if __name__ == "__main__":
     csv_path = "../youtube-top-100-songs-2025.csv"
     songs = read_youtube_csv(csv_path)
+    print(f"Loaded {len(songs)} songs from CSV.")
+    for song in songs[:5]:
+        print(song)
     cleaned_songs = clean_song_data(songs)
     print(f"Loaded {len(cleaned_songs)} cleaned songs from CSV.")
     for song in cleaned_songs[:5]:
         print(song)
+
 
 def get_top_songs_by_views(songs, n):
     # Reference at least 3 columns: title, view_count, channel
