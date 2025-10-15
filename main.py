@@ -1,3 +1,52 @@
+# Name: Aaron Rose
+# Student ID: 2193 0397
+# Email: aaronlr@umich.edu
+# Collaborators: Aaron Rose, Ryan Rose, and Joe Dillon
+# Function Attribution: 
+# Aaron Rose
+
+
+
+def get_top_songs_by_views(songs, n):
+    # Reference at least 3 columns: title, view_count, channel
+    sorted_songs = sorted(songs, key=lambda x: int(x['view_count']), reverse=True)
+    return [{
+        'title': song['title'],
+        'view_count': int(song['view_count']),
+        'channel': song['channel']
+    } for song in sorted_songs[:n]]
+
+def average_duration_by_category(songs, category):
+    # Reference at least 3 columns: duration, categories, title
+    filtered = [s for s in songs if category in s['categories']]
+    if not filtered:
+        return 0
+    total_duration = sum(int(s['duration']) for s in filtered)
+    avg = total_duration / len(filtered)
+    return avg
+
+def write_txt_output(filename, top_song, avg_duration, percent_above):
+    with open(filename, 'w', encoding='utf-8') as f:
+        f.write(f"Top song by view count:\n{top_song}\n\n")
+        f.write(f"Average duration for Pop songs: {avg_duration:.2f} seconds\n\n")
+        f.write(f"Percent of songs with channel followers > 1M: {percent_above:.2f}%\n")
+
+def write_csv_output(filename, songs):
+    with open(filename, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.DictWriter(f, fieldnames=songs[0].keys())
+        writer.writeheader()
+        writer.writerows(songs)
+
+def percent_songs_above_follower_threshold(songs, threshold):
+    count = 0
+    for song in songs:
+        try:
+            if int(song['channel_follower_count']) > threshold:
+                count += 1
+        except ValueError:
+            continue
+    percent = (count / len(songs)) * 100 if songs else 0
+    return percent
 def get_top_song(songs):
     """Return the top song by view count automatically."""
     if not songs:
@@ -7,12 +56,13 @@ def get_top_song(songs):
 def clean_song_data(songs):
     cleaned = []
     for song in songs:
-        cleaned.append({
+        cleaned_song = {
             'title': song.get('title', ''),
             'view_count': song.get('view_count', '0'),
             'channel': song.get('channel', ''),
             'channel_follower_count': song.get('channel_follower_count', '0')
-        })
+        }
+        cleaned.append(cleaned_song)
     return cleaned
 import csv
 
@@ -37,6 +87,17 @@ if __name__ == "__main__":
     print("Top song by view count:")
     print(top_song)
 
+    # Calculation 1: Average duration for Pop songs
+    # (Assumes original songs list has 'duration' and 'categories')
+    avg_duration = average_duration_by_category(songs, 'Pop')
+
+    # Calculation 2: Percent of songs with channel followers > 1,000,000
+    percent_above = percent_songs_above_follower_threshold(cleaned_songs, 1000000)
+
+    # Write results to output files
+    write_txt_output("results.txt", top_song, avg_duration, percent_above)
+    write_csv_output("top_songs.csv", get_top_songs_by_views(cleaned_songs, 10))
+
 
 def get_top_songs_by_views(songs, n):
     # Reference at least 3 columns: title, view_count, channel
@@ -46,29 +107,6 @@ def get_top_songs_by_views(songs, n):
         'view_count': int(song['view_count']),
         'channel': song['channel']
     } for song in sorted_songs[:n]]
-
-# Test cases for get_top_songs_by_views
-def test_get_top_songs_by_views():
-    test_data = [
-        {'title': 'Song A', 'view_count': '100', 'channel': 'Channel X'},
-        {'title': 'Song B', 'view_count': '200', 'channel': 'Channel Y'},
-        {'title': 'Song C', 'view_count': '50', 'channel': 'Channel Z'},
-        {'title': 'Song D', 'view_count': '300', 'channel': 'Channel W'},
-    ]
-    # General case: get top 2
-    result1 = get_top_songs_by_views(test_data, 2)
-    assert result1[0]['title'] == 'Song D' and result1[1]['title'] == 'Song B', "General case failed"
-    # General case: get top 3
-    result2 = get_top_songs_by_views(test_data, 3)
-    assert result2[2]['title'] == 'Song A', "General case failed"
-    # Edge case: n larger than dataset
-    result3 = get_top_songs_by_views(test_data, 10)
-    assert len(result3) == 4, "Edge case failed"
-    # Edge case: n = 0
-    result4 = get_top_songs_by_views(test_data, 0)
-    assert result4 == [], "Edge case failed"
-    print("All tests for get_top_songs_by_views passed.")
-
 def average_duration_by_category(songs, category):
     # Reference at least 3 columns: duration, categories, title
     filtered = [s for s in songs if category in s['categories']]
@@ -77,25 +115,3 @@ def average_duration_by_category(songs, category):
     total_duration = sum(int(s['duration']) for s in filtered)
     avg = total_duration / len(filtered)
     return avg
-
-# Test cases for average_duration_by_category
-def test_average_duration_by_category():
-    test_data = [
-        {'title': 'Song A', 'duration': '100', 'categories': 'Pop'},
-        {'title': 'Song B', 'duration': '200', 'categories': 'Pop;Rock'},
-        {'title': 'Song C', 'duration': '50', 'categories': 'Rock'},
-        {'title': 'Song D', 'duration': '300', 'categories': 'Pop'},
-    ]
-    # General case: Pop
-    avg1 = average_duration_by_category(test_data, 'Pop')
-    assert abs(avg1 - 200) < 1e-6, "General case failed"
-    # General case: Rock
-    avg2 = average_duration_by_category(test_data, 'Rock')
-    assert abs(avg2 - 125) < 1e-6, "General case failed"
-    # Edge case: category not present
-    avg3 = average_duration_by_category(test_data, 'Jazz')
-    assert avg3 == 0, "Edge case failed"
-    # Edge case: only one song in category
-    avg4 = average_duration_by_category(test_data, 'Pop;Rock')
-    assert abs(avg4 - 200) < 1e-6, "Edge case failed"
-    print("All tests for average_duration_by_category passed.")

@@ -1,0 +1,6 @@
+Top song by view count:
+{'title': 'ROSÉ & Bruno Mars - APT. (Official Music Video)', 'view_count': '2009014557', 'channel': 'ROSÉ', 'channel_follower_count': '19200000'}
+
+Average duration for Pop songs: 0.00 seconds
+
+Percent of songs with channel followers > 1M: 72.00%
