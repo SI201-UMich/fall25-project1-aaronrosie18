@@ -1,3 +1,9 @@
+def get_top_song(songs):
+    """Return the top song by view count automatically."""
+    if not songs:
+        return None
+    sorted_songs = sorted(songs, key=lambda x: int(x['view_count']), reverse=True)
+    return sorted_songs[0]
 def clean_song_data(songs):
     cleaned = []
     for song in songs:
@@ -25,6 +31,11 @@ if __name__ == "__main__":
     print(f"Loaded {len(cleaned_songs)} cleaned songs from CSV.")
     for song in cleaned_songs[:5]:
         print(song)
+
+    # Print the top song by view count automatically
+    top_song = get_top_song(cleaned_songs)
+    print("Top song by view count:")
+    print(top_song)
 
 
 def get_top_songs_by_views(songs, n):
