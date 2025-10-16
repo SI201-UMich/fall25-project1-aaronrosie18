@@ -1,7 +1,7 @@
 # Name: Aaron Rose
 # Student ID: 2193 0397
 # Email: aaronlr@umich.edu
-# Who were your collaborators on this assignment? (if any): Ryan Rose and Joe Dillon
+# Who were your collaborators on this assignment? (if any): Ryan Rose
 # If you worked with generative AI also add a statement for how you used it.  
 # e.g.: 
 # Asked Copilot hints for debugging and suggesting the general structure of the code
@@ -127,9 +127,6 @@ if __name__ == "__main__":
     write_txt_output("results.txt", top_song, avg_duration, percent_above)
     write_csv_output("top_songs.csv", get_top_songs_by_views(cleaned_songs, 10))
 
-# =====================
-# Test Functions Below
-# =====================
 def test_get_top_song():
     songs = [
         {'title': 'A', 'view_count': 100, 'channel': 'X', 'channel_follower_count': 1000},
